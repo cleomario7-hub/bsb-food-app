@@ -1,0 +1,38 @@
+{
+  "appId": "br.com.bsbfoods.app",
+  "appName": "BSB Food",
+  "webDir": "www",
+  "server": {
+    "url": "https://www.bsbfoods.com.br",
+    "cleartext": false,
+    "errorPath": "offline.html",
+    "allowNavigation": [
+      "bsbfoods.com.br",
+      "*.bsbfoods.com.br",
+      "*.mercadopago.com.br",
+      "*.mercadopago.com",
+      "*.pagseguro.uol.com.br",
+      "*.google.com",
+      "*.googleapis.com",
+      "*.gstatic.com",
+      "*.openstreetmap.org",
+      "wa.me",
+      "api.whatsapp.com"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#E63919",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#E63919"
+    }
+  }
+}
