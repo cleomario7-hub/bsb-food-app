@@ -1,0 +1,77 @@
+name: Gerar APK BSB Food
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Criar projeto Android
+        run: npx cap add android
+
+      - name: Permissões, ícones e ajustes do Android
+        run: |
+          python3 - <<'EOF'
+          import re
+          p = "android/app/src/main/AndroidManifest.xml"
+          s = open(p, encoding="utf-8").read()
+          perms = [
+              "android.permission.INTERNET",
+              "android.permission.ACCESS_NETWORK_STATE",
+              "android.permission.ACCESS_FINE_LOCATION",
+              "android.permission.ACCESS_COARSE_LOCATION",
+              "android.permission.CAMERA",
+              "android.permission.POST_NOTIFICATIONS",
+              "android.permission.VIBRATE",
+          ]
+          add = ""
+          for perm in perms:
+              if perm not in s:
+                  add += '    <uses-permission android:name="%s" />\n' % perm
+          s = s.replace("</manifest>", add + '    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n</manifest>')
+          s = s.replace('<application', '<application android:usesCleartextTraffic="false"', 1) if "usesCleartextTraffic" not in s else s
+          open(p, "w", encoding="utf-8").write(s)
+          EOF
+          # ícone do app: troca os ícones padrão pelos do BSB Food
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            rm -f android/app/src/main/res/mipmap-$d/ic_launcher*.png android/app/src/main/res/mipmap-$d/ic_launcher*.webp
+            cp resources/mipmap/mipmap-$d/*.png android/app/src/main/res/mipmap-$d/
+          done
+          # cor do splash/tema
+          sed -i 's/#FFFFFF/#E63919/I' android/app/src/main/res/values/styles.xml || true
+
+      - name: Sincronizar Capacitor
+        run: npx cap sync android
+
+      - name: Compilar APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BSB-Food-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
