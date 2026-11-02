@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "480796666365",
+    "project_id": "bsb-entregador",
+    "storage_bucket": "bsb-entregador.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480796666365:android:40a9555840ccdf2afe1194",
+        "android_client_info": {
+          "package_name": "br.com.bsbfoods.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiOK0ALLdGgX2yOcveR0rzqYcFJz4Cmus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
