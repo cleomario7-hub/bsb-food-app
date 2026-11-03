@@ -61,6 +61,22 @@ jobs:
           # cor do splash/tema
           sed -i 's/#FFFFFF/#E63919/I' android/app/src/main/res/values/styles.xml || true
 
+      - name: Firebase (notificações)
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os
+          if not os.path.exists("google-services.json"):
+              print("::error::google-services.json não encontrado na raiz do repositório")
+              sys.exit(1)
+          d = json.load(open("google-services.json", encoding="utf-8"))
+          pacotes = [c["client_info"]["android_client_info"]["package_name"] for c in d.get("client", [])]
+          if "br.com.bsbfoods.app" not in pacotes:
+              print("::error::O google-services.json é de outro pacote: %s. Precisa ser br.com.bsbfoods.app" % pacotes)
+              sys.exit(1)
+          print("google-services.json ok:", pacotes)
+          EOF
+          cp google-services.json android/app/google-services.json
+
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
